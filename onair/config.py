@@ -59,14 +59,6 @@ onair_stems = {
             'vocals': ['Idea 3 Stems - Ambience.wav'],
             'other': ['Idea 3 Stems - Guitar Lead.wav'],
         },
-        'Vibin Vibin - OnAir Music':
-        {
-            'mix': ['Vibin Vibin - OnAir Music.wav'],
-            'bass': ['Idea 5 Stems - Bass.wav'],
-            'drums': ['Idea 5 Stems - Drums.wav', 'Idea 5 Stems - Hats.wav', 'Idea 5 Stems - Shaker.wav'],
-            'vocals': ['Idea 5 Stems - FX.wav', 'Idea 5 Stems - Ambience.wav'],
-            'other': ['Idea 5 Stems - Ad Guitars.wav', 'Idea 5 Stems - Main Guitar.wav'],
-        },
         'Ramen Rain - OnAir Music':
         {
             'mix': ['Ramen Rain - OnAir Music.wav'],
@@ -83,15 +75,23 @@ onair_stems = {
             'vocals': ['Idea 1 Stems - Ambience.wav'],
             'other': ['Idea 1 Stems - Main Gtr.wav', 'Idea 1 Stems - Keys 1.wav', 'Idea 1 Stems - Keys 2.wav'],
         },
-        'Autumn in NY - OnAir Music':
-        {
-            'mix': ['Autumn in NY - OnAir Music.wav'],
-            'bass': ['Idea 4 Stems - Bass.wav'],
-            'drums': ['Idea 4 Stems - Drums.wav', 'Idea 4 Stems - Brushes.wav'],
-            'vocals': [],
-            'other': ['Idea 4 Stems - Amb.wav', 'Idea 4 Stems - Guitar Main.wav', 'Idea 4 Stems - Horns.wav', 'Idea 4 Stems - Keys Chords.wav', 'Idea 4 Stems - Keys Twinkle.wav', 'Idea 4 Stems - Trumps.wav'],
-        },
-        #'Reflections - OnAir Music'
-        #'Aurora Borealis - OnAir Music'
-        #'Action - OnAir Music'
+        #'Vibin Vibin - OnAir Music':
+        #{
+        #    'mix': ['Vibin Vibin - OnAir Music.wav'],
+        #    'bass': ['Idea 5 Stems - Bass.wav'],
+        #    'drums': ['Idea 5 Stems - Drums.wav', 'Idea 5 Stems - Hats.wav', 'Idea 5 Stems - Shaker.wav'],
+        #    'vocals': ['Idea 5 Stems - FX.wav', 'Idea 5 Stems - Ambience.wav'],
+        #    'other': ['Idea 5 Stems - Ad Guitars.wav', 'Idea 5 Stems - Main Guitar.wav'],
+        #},
+        #'Autumn in NY - OnAir Music': - omitted due to length issues/mismatches
+        #{
+        #    'mix': ['Autumn in NY - OnAir Music.wav'],
+        #    'bass': ['Idea 4 Stems - Bass.wav'],
+        #    'drums': ['Idea 4 Stems - Drums.wav', 'Idea 4 Stems - Brushes.wav'],
+        #    'vocals': [],
+        #    'other': ['Idea 4 Stems - Amb.wav', 'Idea 4 Stems - Guitar Main.wav', 'Idea 4 Stems - Horns.wav', 'Idea 4 Stems - Keys Chords.wav', 'Idea 4 Stems - Keys Twinkle.wav', 'Idea 4 Stems - Trumps.wav'],
+        #},
+        #'Reflections - OnAir Music' - omitted due to bass and drums not provided separately
+        #'Aurora Borealis - OnAir Music' - omitted due to bass and drums not provided separately
+        #'Action - OnAir Music' - omitted due to bass and drums not provided separately
 }
