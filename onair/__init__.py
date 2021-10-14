@@ -76,16 +76,17 @@ class DB(object):
                     if track_name not in onair_stems.keys():
                         continue
 
+                    mix_paths = [
+                        op.join(
+                            track_folder,
+                            t
+                        )
+                        for t in onair_stems[track_name]['mix']
+                    ]
                     # create new mus track
                     track = MultiTrack(
                         name=track_name,
-                        path=[
-                            op.join(
-                                track_folder,
-                                t
-                            )
-                            for t in onair_stems[track_name]['mix']
-                        ],
+                        path=mix_paths,
                         stem_id=stem_ids['mix'],
                         sample_rate=self.sample_rate
                     )
@@ -94,7 +95,7 @@ class DB(object):
                     sources = {}
                     for src in onair_sources:
                         # create source object
-                        abs_path = [
+                        src_paths = [
                             op.join(
                                 track_folder,
                                 t
@@ -104,7 +105,7 @@ class DB(object):
                         sources[src] = Source(
                             track,
                             name=src,
-                            path=abs_path,
+                            path=src_paths,
                             stem_id=stem_ids[src],
                             sample_rate=self.sample_rate
                         )
@@ -137,43 +138,3 @@ class DB(object):
                 )
 
         return targets
-
-    def save_estimates(
-        self,
-        user_estimates,
-        track,
-        estimates_dir,
-        write_stems=False
-    ):
-        """Writes `user_estimates` to disk while recreating the musdb file structure in that folder.
-
-        Parameters
-        ==========
-        user_estimates : Dict[np.array]
-            the target estimates.
-        track : Track,
-            musdb track object
-        estimates_dir : str,
-            output folder name where to save the estimates.
-        """
-        track_estimate_dir = op.join(
-            estimates_dir, track.name
-        )
-        if not op.exists(track_estimate_dir):
-            os.makedirs(track_estimate_dir)
-
-        # write out tracks to disk
-        if write_stems:
-            pass
-            # to be implemented
-        else:
-            for target, estimate in list(user_estimates.items()):
-                target_path = op.join(track_estimate_dir, target + '.wav')
-                stempeg.write_audio(
-                    path=target_path,
-                    data=estimate,
-                    sample_rate=track.rate
-                )
-
-    def _check_exists(self):
-        return op.exists(op.join(self.root, "train"))

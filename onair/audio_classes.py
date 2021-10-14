@@ -29,12 +29,14 @@ class Track(object):
         self,
         path="None",
         stem_id=None,
+        subset="all",
         chunk_start=0,
         chunk_duration=None,
         sample_rate=None
     ):
         self.path = path
         self.stem_id = stem_id
+        self.subset = subset
         self.chunk_start = chunk_start
         self.chunk_duration = chunk_duration
         self.sample_rate = sample_rate
@@ -42,12 +44,38 @@ class Track(object):
         # load and store metadata
         single_path = None
         if type(self.path) == list:
-            single_path = self.path[0]
-        else:
-            single_path = self.path
+            info = None
+            samples = None
+            duration = None
+            rate = None
+            for path in self.path:
+                info_ = stempeg.Info(path)
+                samples_ = int(info_.samples(self.stem_id))
+                duration_ = info_.duration(self.stem_id)
+                rate_ = info_.rate(self.stem_id)
 
-        if os.path.exists(single_path):
-            self.info = stempeg.Info(single_path)
+                info = info_ if not info else info
+                samples = samples_ if not samples else samples
+                duration = duration_ if not duration else duration
+                rate = rate_ if not rate else rate
+
+                assert(info == info_)
+                assert(samples == samples_)
+                assert(duration == duration_)
+                assert(rate == rate_)
+
+                info = info_
+                samples = samples_
+                duration = duration_
+                rate = rate_
+
+            self.info = info
+            self.samples = samples
+            self.duration = duration
+            self.rate = rate
+
+        elif os.path.exists(self.path):
+            self.info = stempeg.Info(self.path)
             self.samples = int(self.info.samples(self.stem_id))
             self.duration = self.info.duration(self.stem_id)
             self.rate = self.info.rate(self.stem_id)
@@ -78,7 +106,7 @@ class Track(object):
 
     def load_audio(
         self,
-        path,
+        paths,
         stem_id,
         chunk_start=0,
         chunk_duration=None,
@@ -86,10 +114,10 @@ class Track(object):
     ):
         """array_like: [shape=(num_samples, num_channels)]
         """
-        if type(self.path) == list:
+        if type(paths) == list:
             stem_id = 0
             audios = []
-            for path in self.path:
+            for path in paths:
                 if os.path.exists(path):
                     audio, rate = stempeg.read_stems(
                         filename=path,
@@ -101,13 +129,20 @@ class Track(object):
                         ffmpeg_format="s16le"
                     )
                     audios.append(audio)
+                else:
+                    raise ValueError(f"path {path} doesn't exist")
                 self._rate = rate
-            audio = sum(audios)
+
+            if len(audios) == 0:
+                audio = np.zeros_like(self.audio)
+            else:
+                minlen = min([audio_.shape[0] for audio_ in audios])
+                audio = sum([audio_[:minlen, :] for audio_ in audios])
             return audio
-        elif os.path.exists(self.path):
+        elif os.path.exists(paths):
             stem_id = 0
             audio, rate = stempeg.read_stems(
-                filename=path,
+                filename=paths,
                 stem_id=stem_id,
                 start=chunk_start,
                 duration=chunk_duration,
@@ -123,7 +158,7 @@ class Track(object):
             raise ValueError("Oops! %s cannot be loaded" % path)
 
     def __repr__(self):
-        return "%s" % (self.path)
+        return "%s" % (self.path) if type(self.path) is not list else ','.join(["%s" % (p) for p in self.path])
 
 
 class MultiTrack(Track):
@@ -131,6 +166,7 @@ class MultiTrack(Track):
         self,
         path=None,
         name=None,
+        subset="all",
         artist=None,
         title=None,
         sources=None,
@@ -172,12 +208,16 @@ class MultiTrack(Track):
             # append sources in order of stem_ids
             for k, v in sorted(self.sources.items(), key=lambda x: x[1].stem_id):
                 S.append(v.audio)
-            S = np.array(S)
+
+            # in case any stems have a length mismatch
+            minlen = min([S_.shape[0] for S_ in S])
+            S = np.array([S_[:minlen, :] for S_ in S])
             self._rate = rate
             return S
 
     def __repr__(self):
         return "%s" % (self.name)
+
 
 class Source(Track):
     """
@@ -212,7 +252,7 @@ class Source(Track):
         self._audio = None
 
     def __repr__(self):
-        return self.path
+        return "%s" % (self.path) if type(self.path) is not list else ','.join(["%s" % (p) for p in self.path])
 
     @property
     def audio(self):
